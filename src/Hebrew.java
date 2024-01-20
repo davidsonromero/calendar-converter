@@ -92,7 +92,7 @@ public class Hebrew implements IConversionMethods{
     }
 
     private int firstDayOfWeekOfMonth(int[] ymd){
-
+        return 0;
     }
 
     @Override
