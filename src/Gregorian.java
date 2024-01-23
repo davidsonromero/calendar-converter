@@ -135,15 +135,20 @@ public class Gregorian implements IConversionMethods {
     }
 
     public boolean IsLeapYear(int year){
-        if (year % 4 == 0) {
-            if (year > 1600) {
-                if (year % 400 == 0) {
-                    return true;
-                } else if (year % 100 == 0) {
-                    return false;
+        if(year >= -44){//44 bc is the first leap year
+            if (year % 4 == 0) {
+                if (year > 1600) {
+                    if (year % 400 == 0) {
+                        return true;
+                    } else if (year % 100 == 0) {
+                        return false;
+                    }
                 }
+                return true;
+            } else if (year == -1) {//1 bc is also a leap year
+                return true;
             }
-            return true;
+            return false;
         }
         return false;
     }

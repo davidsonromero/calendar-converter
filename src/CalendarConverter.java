@@ -6,7 +6,8 @@ public class CalendarConverter {
 
     private int day;
 
-    private int firstDayOfCalendar = 6; // 01/01/01 was a Saturday
+    private final int firstDayOfCalendar = 6; // 01/01/01 AD was a Saturday
+    private final int lastDayOfWeekBc = 5; // 12/31/1 BC was a Friday
 
     public int getYear() {
         return this.year;
@@ -104,39 +105,62 @@ public class CalendarConverter {
         int day = this.day;
         double month = this.month + 1;
         double year = this.year;
-        int dayOfWeek = this.firstDayOfCalendar;
-        for (int i = 1; i < year; i++) {
-            if(i != 1582){
-                if (isLeapYear(i))
-                    dayOfWeek += 366;
-                else
-                    dayOfWeek += 365;
-            } else {
-                dayOfWeek += 355;
+        if (year > 0){
+            int dayOfWeek = this.firstDayOfCalendar;
+            for (int i = 1; i < year; i++) {
+                if(i != 1582){
+                    if (isLeapYear(i))
+                        dayOfWeek += 366;
+                    else
+                        dayOfWeek += 365;
+                } else {
+                    dayOfWeek += 355;
+                }
             }
-        }
-        for (int i = 1; i < month; i++) {
-            dayOfWeek += this.gregorian.DaysInMonth((int)year, i);
-        }
-        if (year != 1582)
-            dayOfWeek += day - 1;
-        else {
-            if (month == 10 && day >= 15)
+            for (int i = 1; i < month; i++) {
+                dayOfWeek += this.gregorian.DaysInMonth((int)year, i);
+            }
+            if (year == 1582 && month == 10 && day >= 15) {
                 dayOfWeek += day - 11;
-            else
+            } else {
                 dayOfWeek += day - 1;
-        }
+            }
 
-        return switch (dayOfWeek % 7) {
-            case 0 -> "Sunday";
-            case 1 -> "Monday";
-            case 2 -> "Tuesday";
-            case 3 -> "Wednesday";
-            case 4 -> "Thursday";
-            case 5 -> "Friday";
-            case 6 -> "Saturday";
-            default -> "Error";
-        };
+            return switch (dayOfWeek % 7) {
+                case 0 -> "Sunday";
+                case 1 -> "Monday";
+                case 2 -> "Tuesday";
+                case 3 -> "Wednesday";
+                case 4 -> "Thursday";
+                case 5 -> "Friday";
+                case 6 -> "Saturday";
+                default -> "Error";
+            };
+        } else if (year == 0){
+            throw new IllegalArgumentException("Year 0 does not exist!");
+        } else {
+            int dayOfWeek = this.lastDayOfWeekBc;
+            for (int i = -1; i > year; i--) {
+                if (isLeapYear(i))
+                    dayOfWeek -= 366;
+                else
+                    dayOfWeek -= 365;
+            }
+            for (int i = 12; i > month; i--) {
+                dayOfWeek -= this.gregorian.DaysInMonth((int)year, i);
+            }
+            dayOfWeek -= this.gregorian.DaysInMonth((int)year, (int)month) - day;
+            return switch (dayOfWeek % 7) {
+                case 0 -> "Sunday";
+                case -6, 1 -> "Monday";
+                case -5, 2 -> "Tuesday";
+                case -4, 3 -> "Wednesday";
+                case -3, 4 -> "Thursday";
+                case -2, 5  -> "Friday";
+                case -1, 6 -> "Saturday";
+                default -> "Error";
+            };
+        }
     }
 
     public int daysInMonth(DateCulture culture){
