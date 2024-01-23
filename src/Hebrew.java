@@ -91,7 +91,7 @@ public class Hebrew implements IConversionMethods{
         return isShanaMeuberet;
     }
 
-    private int firstDayOfWeekOfMonth(int[] ymd){
+    private int dayOfWeekNewYear(int[] ymd){
         return 0;
     }
 

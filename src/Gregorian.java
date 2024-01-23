@@ -111,10 +111,17 @@ public class Gregorian implements IConversionMethods {
         if(ymd[0] == 0){
             throw new IllegalArgumentException("Year 0 does not exist!");
         }
+        if(ymd[0] == 1582 && ymd[1] == 9 && ymd[2] > 4 && ymd[2] < 15){
+            throw new IllegalArgumentException("Date does not exist due to Gregorian calendar reform!\nSee more in https://en.wikipedia.org/wiki/Adoption_of_the_Gregorian_calendar");
+        }
     }
 
     @Override
     public int DaysInMonth(int year, int month){
+        month -= 1;
+        if(month == 9 && year == 1582){
+            return 21;
+        }
         if(month == 1){
             if(IsLeapYear(year)){
                 return 29;
@@ -128,10 +135,16 @@ public class Gregorian implements IConversionMethods {
     }
 
     public boolean IsLeapYear(int year){
-        if(year % 100 == 0 && year % 400 == 0){
+        if (year % 4 == 0) {
+            if (year > 1600) {
+                if (year % 400 == 0) {
+                    return true;
+                } else if (year % 100 == 0) {
+                    return false;
+                }
+            }
             return true;
-        } else {
-            return year % 4 == 0 && year % 100 != 0;
         }
+        return false;
     }
 }

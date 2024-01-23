@@ -6,6 +6,8 @@ public class CalendarConverter {
 
     private int day;
 
+    private int firstDayOfCalendar = 6; // 01/01/01 was a Saturday
+
     public int getYear() {
         return this.year;
     }
@@ -36,7 +38,7 @@ public class CalendarConverter {
     private Hebrew hebrew = new Hebrew();
 
     CalendarConverter() {
-        this("1900-01-01", 0, DateCulture.GREGORIAN);
+        this("1900-01-01", 3, DateCulture.GREGORIAN);
     }
     CalendarConverter(String strDate, int format, DateCulture culture) {
         int ymd[] = new int[3];
@@ -98,30 +100,42 @@ public class CalendarConverter {
         return cultureDay;
     }
 
-    public String DayOfWeek(String date, int format){
-        int[] ymd = {this.year, this.month, this.day};
-        int dayOfWeek = 0;
-        int[] daysInMonth = {31, isLeapYear(ymd[0]) ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30};
-        for(int i = 1; i < ymd[0]; i++){
-            if(isLeapYear(i)){
-                dayOfWeek += 366;
+    public String DayOfWeek(){
+        int day = this.day;
+        double month = this.month + 1;
+        double year = this.year;
+        int dayOfWeek = this.firstDayOfCalendar;
+        for (int i = 1; i < year; i++) {
+            if(i != 1582){
+                if (isLeapYear(i))
+                    dayOfWeek += 366;
+                else
+                    dayOfWeek += 365;
             } else {
-                dayOfWeek += 365;
+                dayOfWeek += 355;
             }
         }
-        for(int i = 0; i < ymd[1]; i++){
-            dayOfWeek += daysInMonth[i];
+        for (int i = 1; i < month; i++) {
+            dayOfWeek += this.gregorian.DaysInMonth((int)year, i);
         }
-        dayOfWeek += ymd[2];
-        dayOfWeek %= 7;
-        return switch (dayOfWeek) {
+        if (year != 1582)
+            dayOfWeek += day - 1;
+        else {
+            if (month == 10 && day >= 15)
+                dayOfWeek += day - 11;
+            else
+                dayOfWeek += day - 1;
+        }
+
+        return switch (dayOfWeek % 7) {
             case 0 -> "Sunday";
             case 1 -> "Monday";
             case 2 -> "Tuesday";
             case 3 -> "Wednesday";
             case 4 -> "Thursday";
             case 5 -> "Friday";
-            default -> "Saturday";
+            case 6 -> "Saturday";
+            default -> "Error";
         };
     }
 
