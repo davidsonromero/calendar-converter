@@ -1,4 +1,7 @@
-public class Hebrew implements IConversionMethods{
+package dateConversion;
+
+public class Hebrew implements IConversionMethods {
+    public Hebrew(){}
     @Override
     public int[] DecodeDate(String strDate, int format) {
         int[] ymd = {0, 0, 0};

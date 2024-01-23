@@ -1,4 +1,9 @@
-//Default culture will be Gregorian, since I, the author, am using Gregorian calendar.
+import dateConversion.Gregorian;
+import enumerators.DateCulture;
+import enumerators.GregorianMonth;
+import dateConversion.Hebrew;
+
+//Default culture will be dateConversion.Gregorian, since I, the author, am using dateConversion.Gregorian calendar.
 public class CalendarConverter {
     private int year;
 
@@ -51,7 +56,7 @@ public class CalendarConverter {
                 ymd = this.gregorian.DecodeDate(strDate, format);
                 break;
             case HEBREW:
-                //TODO: decode Hebrew date
+                //TODO: decode dateConversion.Hebrew date
                 break;
             case ISLAMIC:
                 //TODO: decode Islamic date

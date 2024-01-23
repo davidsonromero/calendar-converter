@@ -1,5 +1,7 @@
+package dateConversion;
+
 public class Gregorian implements IConversionMethods {
-    Gregorian(){}
+    public Gregorian(){}
     @Override
     public int[] DecodeDate(String strDate, int format){ // Add " BC" after date for indicating Before Christ dates
         int[] ymd = {0, 0, 0};
@@ -112,7 +114,7 @@ public class Gregorian implements IConversionMethods {
             throw new IllegalArgumentException("Year 0 does not exist!");
         }
         if(ymd[0] == 1582 && ymd[1] == 9 && ymd[2] > 4 && ymd[2] < 15){
-            throw new IllegalArgumentException("Date does not exist due to Gregorian calendar reform!\nSee more in https://en.wikipedia.org/wiki/Adoption_of_the_Gregorian_calendar");
+            throw new IllegalArgumentException("Date does not exist due to dateConversion.Gregorian calendar reform!\nSee more in https://en.wikipedia.org/wiki/Adoption_of_the_Gregorian_calendar");
         }
     }
 

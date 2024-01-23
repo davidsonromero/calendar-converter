@@ -1,3 +1,5 @@
+package dateConversion;
+
 public interface IConversionMethods {
     int[] DecodeDate(String strDate, int format);
     String EncodeDate(int[] ymd, int format);
