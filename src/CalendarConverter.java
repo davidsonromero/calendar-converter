@@ -1,18 +1,13 @@
-import dateConversion.Gregorian;
-import enumerators.DateCulture;
-import enumerators.GregorianMonth;
-import dateConversion.Hebrew;
+import enumerators.*;
+import dateConversion.*;
 
-//Default culture will be dateConversion.Gregorian, since I, the author, am using dateConversion.Gregorian calendar.
+//Default culture will be dateConversion.Gregorian, since I, the author, am using the Gregorian calendar.
 public class CalendarConverter {
     private int year;
-
     private int month;
-
     private int day;
-
-    private final int firstDayOfCalendar = 6; // 01/01/01 AD was a Saturday
-    private final int lastDayOfWeekBc = 5; // 12/31/1 BC was a Friday
+    public final int FIRST_WEEK_DAY_OF_CALENDAR = 6; // 01/01/01 AD was a Saturday
+    public final int LAST_WEEK_DAY_BC = 5; // 12/31/1 BC was a Friday
 
     public int getYear() {
         return this.year;
@@ -40,8 +35,8 @@ public class CalendarConverter {
         this.day = day;
     }
 
-    private Gregorian gregorian = new Gregorian();
-    private Hebrew hebrew = new Hebrew();
+    private final Gregorian GREGORIAN = new Gregorian();
+    private final Hebrew HEBREW = new Hebrew();
 
     CalendarConverter() {
         this("1900-01-01", 3, DateCulture.GREGORIAN);
@@ -53,10 +48,10 @@ public class CalendarConverter {
                 //TODO: decode Chinese date
                 break;
             case GREGORIAN:
-                ymd = this.gregorian.DecodeDate(strDate, format);
+                ymd = this.GREGORIAN.decodeDate(strDate, format);
                 break;
             case HEBREW:
-                //TODO: decode dateConversion.Hebrew date
+                //TODO: decode Hebrew date
                 break;
             case ISLAMIC:
                 //TODO: decode Islamic date
@@ -70,10 +65,6 @@ public class CalendarConverter {
         this.day = ymd[2];
     }
 
-    public String getCultureYear() {
-        return getCultureYear(DateCulture.GREGORIAN);
-    }
-
     public String getCultureYear(DateCulture culture) {
         String cultureYear = "";
         switch (culture) {
@@ -84,8 +75,6 @@ public class CalendarConverter {
         return cultureYear;
     }
 
-    public String getCultureMonth(){ return getCultureMonth(DateCulture.GREGORIAN); }
-
     public String getCultureMonth(DateCulture culture){
         String cultureMonth = "";
         switch (culture) {
@@ -94,8 +83,6 @@ public class CalendarConverter {
         }
         return cultureMonth;
     }
-
-    public String getCultureDay(){ return getCultureDay(DateCulture.GREGORIAN); }
 
     public String getCultureDay(DateCulture culture){
         String cultureDay = "";
@@ -106,12 +93,13 @@ public class CalendarConverter {
         return cultureDay;
     }
 
-    public String DayOfWeek(){
+    //Since the base date will always be Gregorian, there is no need to create this method for other calendars.
+    public String dayOfWeek(){
         int day = this.day;
         double month = this.month + 1;
         double year = this.year;
         if (year > 0){
-            int dayOfWeek = this.firstDayOfCalendar;
+            int dayOfWeek = this.FIRST_WEEK_DAY_OF_CALENDAR;
             for (int i = 1; i < year; i++) {
                 if(i != 1582){
                     if (isLeapYear(i))
@@ -123,7 +111,7 @@ public class CalendarConverter {
                 }
             }
             for (int i = 1; i < month; i++) {
-                dayOfWeek += this.gregorian.DaysInMonth((int)year, i);
+                dayOfWeek += this.GREGORIAN.daysInMonth((int)year, i);
             }
             if (year == 1582 && month == 10 && day >= 15) {
                 dayOfWeek += day - 11;
@@ -144,7 +132,7 @@ public class CalendarConverter {
         } else if (year == 0){
             throw new IllegalArgumentException("Year 0 does not exist!");
         } else {
-            int dayOfWeek = this.lastDayOfWeekBc;
+            int dayOfWeek = this.LAST_WEEK_DAY_BC;
             for (int i = -1; i > year; i--) {
                 if (isLeapYear(i))
                     dayOfWeek -= 366;
@@ -152,9 +140,9 @@ public class CalendarConverter {
                     dayOfWeek -= 365;
             }
             for (int i = 12; i > month; i--) {
-                dayOfWeek -= this.gregorian.DaysInMonth((int)year, i);
+                dayOfWeek -= this.GREGORIAN.daysInMonth((int)year, i);
             }
-            dayOfWeek -= this.gregorian.DaysInMonth((int)year, (int)month) - day;
+            dayOfWeek -= this.GREGORIAN.daysInMonth((int)year, (int)month) - day;
             return switch (dayOfWeek % 7) {
                 case 0 -> "Sunday";
                 case -6, 1 -> "Monday";
@@ -172,7 +160,7 @@ public class CalendarConverter {
         int daysInMonth = 0;
         switch (culture) {
             case GREGORIAN:
-                daysInMonth = this.gregorian.DaysInMonth(year, month);
+                daysInMonth = this.GREGORIAN.daysInMonth(year, month);
         }
         return daysInMonth;
     }
@@ -182,7 +170,7 @@ public class CalendarConverter {
         int[] ymd = {year, month, day};
         switch (culture){
             case GREGORIAN:
-                date = this.gregorian.EncodeDate(ymd, format);
+                date = this.GREGORIAN.encodeDate(ymd, format);
                 break;
         }
         return date;
@@ -199,9 +187,9 @@ public class CalendarConverter {
     }
 
     public boolean isLeapYear(){
-        return this.gregorian.IsLeapYear(this.year);
+        return this.GREGORIAN.IsLeapYear(this.year);
     }
-    public boolean isLeapYear(int year){
-        return this.gregorian.IsLeapYear(year);
+    public static boolean isLeapYear(int year){
+        return new Gregorian().IsLeapYear(year);
     }
 }

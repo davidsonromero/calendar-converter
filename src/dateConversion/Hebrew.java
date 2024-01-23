@@ -3,70 +3,28 @@ package dateConversion;
 public class Hebrew implements IConversionMethods {
     public Hebrew(){}
     @Override
-    public int[] DecodeDate(String strDate, int format) {
-        int[] ymd = {0, 0, 0};
+    public int[] decodeDate(String strDate, int format) {
         int[] hebYmd = {0, 0, 0};
-
-        String[] values;
-        switch (format) {
-            case 0: // yyyy/mm/dd
-                values = strDate.split(" ")[0].split("/");
-                hebYmd[0] = Integer.parseInt(values[0]);
-                hebYmd[1] = Integer.parseInt(values[1]) - 1;
-                hebYmd[2] = Integer.parseInt(values[2]);
+        String[] values = strDate.split(" ")[0].split(format < 6 ? "/" : format < 9 ? "-" : " ");
+        switch (format % 3) {
+            case 0: // yyyy/mm/dd, yyyy-mm-dd, yyyy mm dd
+                assignValues(hebYmd, values, 0, 1, 2);
                 break;
-            case 1: // dd/mm/yyyy
-                values = strDate.split(" ")[0].split("/");
-                hebYmd[0] = Integer.parseInt(values[2]);
-                hebYmd[1] = Integer.parseInt(values[1]) - 1;
-                hebYmd[2] = Integer.parseInt(values[0]);
+            case 1: // dd/mm/yyyy, dd-mm-yyyy, dd mm yyyy
+                assignValues(hebYmd, values, 2, 1, 0);
                 break;
-            case 2: // mm/dd/yyyy
-                values = strDate.split(" ")[0].split("/");
-                hebYmd[0] = Integer.parseInt(values[2]);
-                hebYmd[1] = Integer.parseInt(values[0]) - 1;
-                hebYmd[2] = Integer.parseInt(values[1]);
-                break;
-            case 3: // yyyy-mm-dd
-                values = strDate.split(" ")[0].split("-");
-                hebYmd[0] = Integer.parseInt(values[0]);
-                hebYmd[1] = Integer.parseInt(values[1]) - 1;
-                hebYmd[2] = Integer.parseInt(values[2]);
-                break;
-            case 4: // dd-mm-yyyy
-                values = strDate.split(" ")[0].split("-");
-                hebYmd[0] = Integer.parseInt(values[2]);
-                hebYmd[1] = Integer.parseInt(values[1]) - 1;
-                hebYmd[2] = Integer.parseInt(values[0]);
-                break;
-            case 5: // mm-dd-yyyy
-                values = strDate.split(" ")[0].split("-");
-                hebYmd[0] = Integer.parseInt(values[2]);
-                hebYmd[1] = Integer.parseInt(values[0]) - 1;
-                hebYmd[2] = Integer.parseInt(values[1]);
-                break;
-            case 6: // yyyy mm dd
-                values = strDate.split(" ")[0].split(" ");
-                hebYmd[0] = Integer.parseInt(values[0]);
-                hebYmd[1] = Integer.parseInt(values[1]) - 1;
-                hebYmd[2] = Integer.parseInt(values[2]);
-                break;
-            case 7: // dd mm yyyy
-                values = strDate.split(" ")[0].split(" ");
-                hebYmd[0] = Integer.parseInt(values[2]);
-                hebYmd[1] = Integer.parseInt(values[1]) - 1;
-                hebYmd[2] = Integer.parseInt(values[0]);
-                break;
-            case 8: // mm dd yyyy
-                values = strDate.split(" ")[0].split(" ");
-                hebYmd[0] = Integer.parseInt(values[2]);
-                hebYmd[1] = Integer.parseInt(values[0]) - 1;
-                hebYmd[2] = Integer.parseInt(values[1]);
+            case 2: // mm/dd/yyyy, mm-dd-yyyy, mm dd yyyy
+                assignValues(hebYmd, values, 2, 0, 1);
                 break;
         }
-        VerifyFlawsDateArray(hebYmd);
-        ymd = ConvertDate(hebYmd);
-        return ymd;
+        verifyFlawsDateArray(hebYmd);
+        return ConvertDate(hebYmd);
+    }
+
+    private void assignValues(int[] ymd, String[] values, int yearIndex, int monthIndex, int dayIndex) {
+        ymd[0] = Integer.parseInt(values[yearIndex]);
+        ymd[1] = Integer.parseInt(values[monthIndex]) - 1;
+        ymd[2] = Integer.parseInt(values[dayIndex]);
     }
 
     private int[] ConvertDate(int[] hebYmd) {
@@ -99,12 +57,12 @@ public class Hebrew implements IConversionMethods {
     }
 
     @Override
-    public String EncodeDate(int[] ymd, int format) {
+    public String encodeDate(int[] ymd, int format) {
         return null;
     }
 
     @Override
-    public void VerifyFlawsDateArray(int[] ymd) {
+    public void verifyFlawsDateArray(int[] ymd) {
         if(ymd.length != 3){
             throw new IllegalArgumentException("Your ymd array must have exactly 3 elements!");
         }
@@ -121,7 +79,7 @@ public class Hebrew implements IConversionMethods {
     }
 
     @Override
-    public int DaysInMonth(int year, int month) {
+    public int daysInMonth(int year, int month) {
         return 0;
     }
 }
